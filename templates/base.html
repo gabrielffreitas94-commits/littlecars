@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}LittleCars | Gestão de Coleção de Carrinhos{% endblock %}</title>
+  <!-- CSS Próprio Feito para o Projeto (Sem frameworks externos) -->
+  <link rel="stylesheet" href="/static/css/style.css">
+  <!-- HTMX Local -->
+  <script src="/static/js/htmx.min.js"></script>
+</head>
+<body>
+
+  <!-- Barra de Navegação -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="/estoque" class="nav-brand">
+        <span class="brand-badge">🏎️ MINI GARAGE</span>
+        <span>LittleCars</span>
+      </a>
+
+      <nav>
+        <ul class="nav-menu">
+          <li>
+            <a href="/estoque" class="nav-link {% if active_page == 'estoque' %}active{% endif %}">
+              <span>📦 Estoque</span>
+              <span id="nav-stock-pill" class="counter-pill" hx-get="/estoque/metrics/pill" hx-trigger="stockChanged from:body">
+                {{ total_itens_estoque if total_itens_estoque is defined else '' }}
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href="/carrinhos" class="nav-link {% if active_page == 'carrinhos' %}active{% endif %}">
+              <span>🚗 Coleção & Carrinhos</span>
+            </a>
+          </li>
+          <li>
+            <a href="/modelos" class="nav-link {% if active_page == 'modelos' %}active{% endif %}">
+              <span>🏷️ Modelos</span>
+            </a>
+          </li>
+          <li>
+            <a href="/marcas" class="nav-link {% if active_page == 'marcas' %}active{% endif %}">
+              <span>🏭 Marcas</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="main-wrapper">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Container Global para Modais Injetados por HTMX -->
+  <div id="modal-container"></div>
+
+  <!-- Container Global de Notificações Toast -->
+  <div id="toast-container"></div>
+
+  <!-- Rodapé -->
+  <footer class="footer">
+    <p>🏎️ <strong>LittleCars</strong> &copy; 2026 &mdash; Sistema de Gestão de Carrinhos Die-Cast &middot; FastAPI + HTMX + CSS Próprio</p>
+  </footer>
+
+  <!-- Script simples para manipular Toasts vindos do HTMX -->
+  <script>
+    document.body.addEventListener('showToast', function(evt) {
+      const msg = evt.detail.value || evt.detail.message || "Ação executada com sucesso!";
+      const type = evt.detail.type || "success";
+      
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.innerHTML = `<span>${type === 'success' ? '✅' : '⚠️'}</span> <div>${msg}</div>`;
+      
+      const container = document.getElementById('toast-container');
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        setTimeout(() => toast.remove(), 400);
+      }, 3500);
+    });
+
+    function closeModal() {
+      const modal = document.getElementById('modal-container');
+      if (modal) modal.innerHTML = '';
+    }
+  </script>
+</body>
+</html>

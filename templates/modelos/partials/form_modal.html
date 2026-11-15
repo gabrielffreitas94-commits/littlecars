@@ -1,0 +1,106 @@
+<div class="modal-backdrop" onclick="if(event.target === this) closeModal()">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3>🏷️ {{ titulo }}</h3>
+      <button type="button" class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+
+    <form 
+      {% if modelo %}
+      hx-post="/modelos/{{ modelo.id }}/editar"
+      {% else %}
+      hx-post="/modelos"
+      {% endif %}
+      hx-target="#modelos-list-container"
+      hx-swap="innerHTML"
+      onsubmit="closeModal()"
+    >
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="marca_id">Marca Fabricante *</label>
+          <select id="marca_id" name="marca_id" class="form-control" required>
+            <option value="">-- Selecione a Marca --</option>
+            {% for m in marcas %}
+            <option value="{{ m.id }}" {% if default_marca_id == m.id %}selected{% endif %}>
+              {{ m.nome }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="nome">Nome do Modelo de Carro *</label>
+          <input 
+            type="text" 
+            id="nome" 
+            name="nome" 
+            class="form-control" 
+            required 
+            placeholder="Ex: Nissan Skyline GT-R (R34), '67 Camaro, Porsche 911"
+            value="{{ modelo.nome if modelo else '' }}"
+            autofocus
+          >
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label" for="tipo_carroceria">Tipo / Estilo de Carroceria</label>
+            <input 
+              type="text" 
+              id="tipo_carroceria" 
+              name="tipo_carroceria" 
+              class="form-control" 
+              list="carroceria-sugestoes"
+              placeholder="Ex: Muscle Car, Supercarro, SUV"
+              value="{{ modelo.tipo_carroceria if modelo and modelo.tipo_carroceria else '' }}"
+            >
+            <datalist id="carroceria-sugestoes">
+              <option value="Muscle Car">
+              <option value="Esportivo / JDM">
+              <option value="Supercarro / Hipercarro">
+              <option value="Picape / Caminhonete">
+              <option value="Clássico / Vintage">
+              <option value="SUV / Off-Road">
+              <option value="Hot Rod / Custom">
+              <option value="Carro de Corrida / F1">
+              <option value="Sedan">
+              <option value="Hatchback">
+            </datalist>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="ano_lancamento">Ano de Lançamento / Modelo Real</label>
+            <input 
+              type="number" 
+              id="ano_lancamento" 
+              name="ano_lancamento" 
+              class="form-control" 
+              placeholder="Ex: 1999"
+              min="1900" 
+              max="2035"
+              value="{{ modelo.ano_lancamento if modelo and modelo.ano_lancamento else '' }}"
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="descricao">Detalhes / Curiosidades do Modelo</label>
+          <textarea 
+            id="descricao" 
+            name="descricao" 
+            class="form-control" 
+            rows="3" 
+            placeholder="Ex: Designer famoso, história em filmes, geração do motor..."
+          >{{ modelo.descricao if modelo and modelo.descricao else '' }}</textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary">
+          💾 Salvar Modelo
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

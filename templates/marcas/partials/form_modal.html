@@ -1,0 +1,93 @@
+<div class="modal-backdrop" onclick="if(event.target === this) closeModal()">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3>🏭 {{ titulo }}</h3>
+      <button type="button" class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+
+    <form 
+      {% if marca %}
+      hx-post="/marcas/{{ marca.id }}/editar"
+      {% else %}
+      hx-post="/marcas"
+      {% endif %}
+      hx-target="#marcas-list-container"
+      hx-swap="innerHTML"
+      onsubmit="closeModal()"
+    >
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="nome">Nome da Marca *</label>
+          <input 
+            type="text" 
+            id="nome" 
+            name="nome" 
+            class="form-control" 
+            required 
+            placeholder="Ex: Hot Wheels, Matchbox, Tomica"
+            value="{{ marca.nome if marca else '' }}"
+            autofocus
+          >
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label" for="pais_origem">País de Origem</label>
+            <input 
+              type="text" 
+              id="pais_origem" 
+              name="pais_origem" 
+              class="form-control" 
+              placeholder="Ex: EUA, Japão, Reino Unido, França"
+              value="{{ marca.pais_origem if marca else '' }}"
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="ano_fundacao">Ano de Fundação</label>
+            <input 
+              type="number" 
+              id="ano_fundacao" 
+              name="ano_fundacao" 
+              class="form-control" 
+              placeholder="Ex: 1968"
+              min="1800" 
+              max="2030"
+              value="{{ marca.ano_fundacao if marca and marca.ano_fundacao else '' }}"
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="site_oficial">Site Oficial / Referência</label>
+          <input 
+            type="url" 
+            id="site_oficial" 
+            name="site_oficial" 
+            class="form-control" 
+            placeholder="https://..."
+            value="{{ marca.site_oficial if marca and marca.site_oficial else '' }}"
+          >
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="descricao">Descrição / Histórico da Marca</label>
+          <textarea 
+            id="descricao" 
+            name="descricao" 
+            class="form-control" 
+            rows="3" 
+            placeholder="Breve descrição, linhas de produtos conhecidas, etc."
+          >{{ marca.descricao if marca and marca.descricao else '' }}</textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary">
+          💾 Salvar Marca
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

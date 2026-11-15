@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Marcas de Carrinhos | LittleCars{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title-group">
+    <h1>🏭 Marcas de Miniaturas</h1>
+    <p>Cadastre e gerencie as fabricantes de carrinhos colecionáveis (Hot Wheels, Matchbox, etc.)</p>
+  </div>
+  <div class="page-actions">
+    <button 
+      class="btn btn-primary" 
+      hx-get="/marcas/modal/novo" 
+      hx-target="#modal-container"
+    >
+      + Nova Marca
+    </button>
+  </div>
+</div>
+
+<!-- Painel de Busca Rápida -->
+<div class="filter-panel">
+  <div style="display: flex; gap: 1rem; align-items: center;">
+    <div class="form-group" style="flex: 1;">
+      <input 
+        type="text" 
+        name="busca" 
+        class="form-control" 
+        placeholder="🔍 Pesquisar marca por nome ou país de origem..." 
+        value="{{ busca }}"
+        hx-get="/marcas" 
+        hx-trigger="keyup changed delay:250ms, search" 
+        hx-target="#marcas-list-container"
+      >
+    </div>
+  </div>
+</div>
+
+<!-- Lista de Marcas -->
+<div id="marcas-list-container">
+  {% include "marcas/partials/list.html" %}
+</div>
+{% endblock %}

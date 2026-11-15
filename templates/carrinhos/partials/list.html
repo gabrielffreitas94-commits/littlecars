@@ -1,0 +1,177 @@
+{% if carrinhos %}
+
+{% if view == 'table' %}
+<div class="table-container">
+  <table class="custom-table">
+    <thead>
+      <tr>
+        <th>Marca & Modelo</th>
+        <th>Cor & Detalhes</th>
+        <th>Escala & Ano</th>
+        <th>Série / Coleção</th>
+        <th>Condição</th>
+        <th>Localização</th>
+        <th>Estoque</th>
+        <th>Valor Est.</th>
+        <th style="text-align: right;">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in carrinhos %}
+      <tr id="carrinho-row-{{ c.id }}">
+        <td>
+          <a href="/carrinhos/{{ c.id }}" style="font-weight: 700; color: #fff; text-decoration: none;">
+            {{ c.modelo_nome }}
+          </a>
+          <div>
+            <span class="badge badge-brand">{{ c.marca_nome }}</span>
+            {% if c.tipo_carroceria %}
+            <span style="font-size: 0.75rem; color: var(--text-dim);">{{ c.tipo_carroceria }}</span>
+            {% endif %}
+          </div>
+        </td>
+        <td>
+          <span style="font-weight: 600; color: #e2e8f0;">{{ c.cor }}</span>
+        </td>
+        <td>
+          <span class="badge badge-condicao">{{ c.escala }}</span>
+          {% if c.ano_fabricacao %}
+          <span style="font-size: 0.8rem; color: var(--text-muted);">{{ c.ano_fabricacao }}</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if c.serie_colecao %}
+          <span style="font-size: 0.85rem; color: #cbd5e1;">{{ c.serie_colecao }}</span>
+          {% else %}
+          <span style="color: var(--text-dim);">-</span>
+          {% endif %}
+        </td>
+        <td>
+          <span class="badge badge-condicao">{{ c.condicao }}</span>
+        </td>
+        <td>
+          {% if c.localizacao %}
+          <span style="font-size: 0.82rem; color: #94a3b8;">📍 {{ c.localizacao }}</span>
+          {% else %}
+          <span style="color: var(--text-dim);">-</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if c.quantidade == 0 %}
+          <span class="badge badge-stock-zero">0 un (Esgotado)</span>
+          {% elif c.quantidade == 1 %}
+          <span class="badge badge-stock-low">1 un (Último)</span>
+          {% else %}
+          <span class="badge badge-stock-ok">{{ c.quantidade }} un</span>
+          {% endif %}
+        </td>
+        <td style="font-weight: 600; color: #34d399;">
+          R$ {{ "%.2f"|format(c.valor_estimado) }}
+        </td>
+        <td style="text-align: right;">
+          <div style="display: inline-flex; gap: 0.4rem;">
+            <a href="/carrinhos/{{ c.id }}" class="btn btn-secondary btn-sm" title="Ver Detalhes">
+              👁️
+            </a>
+            <a href="/carrinhos/{{ c.id }}/editar" class="btn btn-secondary btn-sm" title="Editar">
+              ✏️
+            </a>
+            <button 
+              class="btn btn-danger btn-sm" 
+              hx-delete="/carrinhos/{{ c.id }}?view=table" 
+              hx-target="#carrinhos-list-container"
+              hx-confirm="Deseja realmente remover este carrinho da coleção?"
+              title="Excluir">
+              🗑️
+            </button>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% else %}
+<!-- Grid de Cards Estilizados -->
+<div class="cards-grid">
+  {% for c in carrinhos %}
+  <div class="car-card" id="car-card-{{ c.id }}">
+    <div>
+      <div class="car-card-header">
+        <div>
+          <span class="badge badge-brand">{{ c.marca_nome }}</span>
+          {% if c.ano_fabricacao %}
+          <span class="badge badge-condicao">{{ c.ano_fabricacao }}</span>
+          {% endif %}
+        </div>
+        <div>
+          {% if c.quantidade == 0 %}
+          <span class="badge badge-stock-zero">Esgotado</span>
+          {% elif c.quantidade == 1 %}
+          <span class="badge badge-stock-low">1 em estoque</span>
+          {% else %}
+          <span class="badge badge-stock-ok">{{ c.quantidade }} em estoque</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <a href="/carrinhos/{{ c.id }}">
+        <h3 class="car-card-title">{{ c.modelo_nome }}</h3>
+      </a>
+      
+      <div class="car-card-meta">
+        <span class="badge badge-condicao">Escala {{ c.escala }}</span>
+        <span class="badge badge-model">{{ c.condicao }}</span>
+      </div>
+
+      <div class="car-card-details">
+        <div><strong>Cor/Pintura:</strong> {{ c.cor }}</div>
+        {% if c.serie_colecao %}
+        <div><strong>Série:</strong> {{ c.serie_colecao }}</div>
+        {% endif %}
+        {% if c.localizacao %}
+        <div><strong>Localização:</strong> 📍 {{ c.localizacao }}</div>
+        {% endif %}
+        {% if c.codigo_barra_sku %}
+        <div><strong>SKU/Código:</strong> {{ c.codigo_barra_sku }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="car-card-footer">
+      <div>
+        <div style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase;">Valor Est.</div>
+        <div style="font-weight: 800; color: #34d399; font-size: 1.05rem;">
+          R$ {{ "%.2f"|format(c.valor_estimado) }}
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 0.4rem;">
+        <a href="/carrinhos/{{ c.id }}" class="btn btn-secondary btn-sm">Detalhes</a>
+        <a href="/carrinhos/{{ c.id }}/editar" class="btn btn-secondary btn-sm">✏️</a>
+        <button 
+          class="btn btn-danger btn-sm"
+          hx-delete="/carrinhos/{{ c.id }}?view=cards"
+          hx-target="#carrinhos-list-container"
+          hx-confirm="Excluir este carrinho da coleção?"
+          title="Excluir">
+          🗑️
+        </button>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="empty-state">
+  <div class="icon">🏎️</div>
+  <h3>Nenhum carrinho encontrado na garagem</h3>
+  <p>Cadastre os carrinhos da sua coleção especificando cor, série, condição, localização e escala.</p>
+  <a href="/carrinhos/novo" class="btn btn-primary">
+    + Cadastrar Primeiro Carrinho
+  </a>
+</div>
+{% endif %}

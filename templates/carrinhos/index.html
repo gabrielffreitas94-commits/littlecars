@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Garagem de Carrinhos | LittleCars{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title-group">
+    <h1>🏎️ Coleção de Carrinhos</h1>
+    <p>Catálogo visual de todas as miniaturas com busca avançada, filtros de marcas e condições.</p>
+  </div>
+  <div class="page-actions">
+    <a href="/carrinhos/novo" class="btn btn-primary">
+      + Novo Carrinho
+    </a>
+  </div>
+</div>
+
+<!-- Painel de Filtros e Busca -->
+<div class="filter-panel">
+  <div class="filter-form">
+    <div class="form-group">
+      <label class="form-label">Pesquisa Rápida</label>
+      <input 
+        type="text" 
+        name="busca" 
+        class="form-control" 
+        placeholder="🔍 Modelo, cor, série, marca..." 
+        value="{{ busca }}"
+        hx-get="/carrinhos" 
+        hx-include="[name='marca_id'], [name='condicao'], [name='localizacao'], [name='view']"
+        hx-trigger="keyup changed delay:250ms, search" 
+        hx-target="#carrinhos-list-container"
+      >
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Marca</label>
+      <select 
+        name="marca_id" 
+        class="form-control"
+        hx-get="/carrinhos" 
+        hx-include="[name='busca'], [name='condicao'], [name='localizacao'], [name='view']"
+        hx-trigger="change" 
+        hx-target="#carrinhos-list-container"
+      >
+        <option value="">Todas as Marcas</option>
+        {% for m in marcas %}
+        <option value="{{ m.id }}" {% if marca_id_selecionada == m.id %}selected{% endif %}>
+          {{ m.nome }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Condição</label>
+      <select 
+        name="condicao" 
+        class="form-control"
+        hx-get="/carrinhos" 
+        hx-include="[name='busca'], [name='marca_id'], [name='localizacao'], [name='view']"
+        hx-trigger="change" 
+        hx-target="#carrinhos-list-container"
+      >
+        <option value="">Todas as Condições</option>
+        <option value="Blister/Cartela Fechada" {% if condicao_selecionada == 'Blister/Cartela Fechada' %}selected{% endif %}>Blister/Cartela Fechada</option>
+        <option value="Caixa Original Fechada" {% if condicao_selecionada == 'Caixa Original Fechada' %}selected{% endif %}>Caixa Original Fechada</option>
+        <option value="Caixa Colecionador Lacrada" {% if condicao_selecionada == 'Caixa Colecionador Lacrada' %}selected{% endif %}>Caixa Colecionador Lacrada</option>
+        <option value="Loose - Impecável" {% if condicao_selecionada == 'Loose - Impecável' %}selected{% endif %}>Loose - Impecável</option>
+        <option value="Loose - Pequenos Detalhes" {% if condicao_selecionada == 'Loose - Pequenos Detalhes' %}selected{% endif %}>Loose - Detalhes</option>
+        <option value="Customizado" {% if condicao_selecionada == 'Customizado' %}selected{% endif %}>Customizado</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Localização</label>
+      <select 
+        name="localizacao" 
+        class="form-control"
+        hx-get="/carrinhos" 
+        hx-include="[name='busca'], [name='marca_id'], [name='condicao'], [name='view']"
+        hx-trigger="change" 
+        hx-target="#carrinhos-list-container"
+      >
+        <option value="">Todas as Localizações</option>
+        {% for loc in localizacoes %}
+        <option value="{{ loc }}" {% if localizacao_selecionada == loc %}selected{% endif %}>{{ loc }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Toggle de Visualização (Cards vs Tabela) -->
+    <div class="form-group">
+      <label class="form-label">Modo Exibição</label>
+      <div style="display: flex; gap: 0.25rem;">
+        <input type="hidden" name="view" id="view-mode-input" value="{{ view }}">
+        <button 
+          type="button" 
+          class="btn {% if view == 'cards' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm"
+          onclick="document.getElementById('view-mode-input').value='cards'; htmx.trigger(document.querySelector('[name=busca]'), 'search');"
+          title="Modo Cards">
+          🗂️ Cards
+        </button>
+        <button 
+          type="button" 
+          class="btn {% if view == 'table' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm"
+          onclick="document.getElementById('view-mode-input').value='table'; htmx.trigger(document.querySelector('[name=busca]'), 'search');"
+          title="Modo Tabela">
+          📋 Tabela
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Container da Lista -->
+<div id="carrinhos-list-container">
+  {% include "carrinhos/partials/list.html" %}
+</div>
+{% endblock %}

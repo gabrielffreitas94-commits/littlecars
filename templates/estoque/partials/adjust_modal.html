@@ -1,0 +1,70 @@
+<div class="modal-backdrop" onclick="if(event.target === this) closeModal()">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3>⚙️ Ajustar Estoque: {{ carrinho.modelo_nome }}</h3>
+      <button type="button" class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+
+    <form 
+      hx-post="/estoque/modal/ajustar/{{ carrinho.id }}" 
+      hx-target="#stock-row-{{ carrinho.id }}" 
+      hx-swap="outerHTML"
+      onsubmit="closeModal()"
+    >
+      <div class="modal-body">
+        <div style="background-color: var(--bg-input); padding: 0.85rem; border-radius: var(--radius-md); font-size: 0.88rem; color: var(--text-muted); border-left: 3px solid var(--accent-orange);">
+          <strong>Item:</strong> {{ carrinho.marca_nome }} &mdash; {{ carrinho.modelo_nome }} ({{ carrinho.cor }})
+          <br>
+          <strong>Escala:</strong> {{ carrinho.escala }} | <strong>Condição:</strong> {{ carrinho.condicao }}
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label" for="ajuste_quantidade">Nova Quantidade em Estoque *</label>
+            <input 
+              type="number" 
+              id="ajuste_quantidade" 
+              name="quantidade" 
+              class="form-control" 
+              required 
+              min="0" 
+              max="9999"
+              value="{{ carrinho.quantidade }}"
+              autofocus
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="ajuste_localizacao">Localização Física / Gaveta</label>
+            <input 
+              type="text" 
+              id="ajuste_localizacao" 
+              name="localizacao" 
+              class="form-control" 
+              placeholder="Ex: Estante B - Prateleira 2"
+              value="{{ carrinho.localizacao if carrinho.localizacao else '' }}"
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="ajuste_motivo">Motivo do Ajuste (Opcional)</label>
+          <input 
+            type="text" 
+            id="ajuste_motivo" 
+            name="motivo" 
+            class="form-control" 
+            placeholder="Ex: Contagem física periódica, compra em lote, troca com amigo..."
+          >
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary">
+          💾 Salvar Ajuste
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

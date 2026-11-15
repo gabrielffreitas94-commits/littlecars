@@ -1,0 +1,33 @@
+{% if carrinhos %}
+<div class="table-container">
+  <table class="custom-table">
+    <thead>
+      <tr>
+        <th>Modelo & Marca</th>
+        <th>Cor & Série</th>
+        <th>Escala / Ano</th>
+        <th>Condição</th>
+        <th>Localização</th>
+        <th>Qtd. Estoque</th>
+        <th>Status</th>
+        <th>Valor Total (R$)</th>
+        <th style="text-align: right;">Ações de Estoque</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in carrinhos %}
+        {% include "estoque/partials/row.html" %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="icon">📦</div>
+  <h3>Nenhum item encontrado no estoque</h3>
+  <p>Tente ajustar os filtros de busca ou cadastre novas miniaturas na garagem.</p>
+  <a href="/carrinhos/novo" class="btn btn-primary">
+    + Cadastrar Carrinho
+  </a>
+</div>
+{% endif %}

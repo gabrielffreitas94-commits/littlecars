@@ -1,0 +1,82 @@
+{% if modelos %}
+<div class="table-container">
+  <table class="custom-table">
+    <thead>
+      <tr>
+        <th>Modelo</th>
+        <th>Marca</th>
+        <th>Tipo de Carroceria</th>
+        <th>Ano Lançamento</th>
+        <th>Variações / Exemplares</th>
+        <th>Estoque Físico</th>
+        <th style="text-align: right;">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in modelos %}
+      <tr id="modelo-row-{{ m.id }}">
+        <td>
+          <div style="font-weight: 700; color: #fff; font-size: 0.98rem;">{{ m.nome }}</div>
+          {% if m.descricao %}
+          <div style="font-size: 0.78rem; color: var(--text-dim); max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            {{ m.descricao }}
+          </div>
+          {% endif %}
+        </td>
+        <td>
+          <span class="badge badge-brand">{{ m.marca_nome }}</span>
+        </td>
+        <td>
+          {% if m.tipo_carroceria %}
+          <span class="badge badge-condicao">{{ m.tipo_carroceria }}</span>
+          {% else %}
+          <span style="color: var(--text-dim);">-</span>
+          {% endif %}
+        </td>
+        <td>
+          {{ m.ano_lancamento if m.ano_lancamento else '-' }}
+        </td>
+        <td>
+          <span class="badge badge-model">{{ m.total_carrinhos }} variação(ões)</span>
+        </td>
+        <td>
+          {% if m.total_exemplares > 0 %}
+          <span class="badge badge-stock-ok">📦 {{ m.total_exemplares }} unidade(s)</span>
+          {% else %}
+          <span class="badge badge-stock-zero">0 unidades</span>
+          {% endif %}
+        </td>
+        <td style="text-align: right;">
+          <div style="display: inline-flex; gap: 0.4rem;">
+            <button 
+              class="btn btn-secondary btn-sm" 
+              hx-get="/modelos/modal/editar/{{ m.id }}" 
+              hx-target="#modal-container"
+              title="Editar Modelo">
+              ✏️ Editar
+            </button>
+            <button 
+              class="btn btn-danger btn-sm" 
+              hx-delete="/modelos/{{ m.id }}" 
+              hx-target="#modelos-list-container"
+              hx-confirm="Tem certeza que deseja excluir o modelo '{{ m.nome }}'? Todos os carrinhos cadastrados para este modelo serão excluídos."
+              title="Excluir Modelo">
+              🗑️
+            </button>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="icon">🏷️</div>
+  <h3>Nenhum modelo cadastrado</h3>
+  <p>Cadastre os modelos de veículos como '67 Camaro, Nissan Skyline R34, Dodge Charger, etc.</p>
+  <button class="btn btn-primary" hx-get="/modelos/modal/novo" hx-target="#modal-container">
+    + Cadastrar Primeiro Modelo
+  </button>
+</div>
+{% endif %}

@@ -1,0 +1,88 @@
+{% if marcas %}
+<div class="table-container">
+  <table class="custom-table">
+    <thead>
+      <tr>
+        <th>Marca</th>
+        <th>País de Origem</th>
+        <th>Ano Fundação</th>
+        <th>Modelos</th>
+        <th>Itens em Estoque</th>
+        <th>Site Oficial</th>
+        <th style="text-align: right;">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in marcas %}
+      <tr id="marca-row-{{ m.id }}">
+        <td>
+          <div style="font-weight: 700; color: #fff; font-size: 0.98rem;">{{ m.nome }}</div>
+          {% if m.descricao %}
+          <div style="font-size: 0.78rem; color: var(--text-dim); max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            {{ m.descricao }}
+          </div>
+          {% endif %}
+        </td>
+        <td>
+          {% if m.pais_origem %}
+          <span class="badge badge-brand">{{ m.pais_origem }}</span>
+          {% else %}
+          <span style="color: var(--text-dim);">-</span>
+          {% endif %}
+        </td>
+        <td>
+          {{ m.ano_fundacao if m.ano_fundacao else '-' }}
+        </td>
+        <td>
+          <span class="badge badge-model">{{ m.total_modelos }} modelo(s)</span>
+        </td>
+        <td>
+          {% if m.total_exemplares > 0 %}
+          <span class="badge badge-stock-ok">📦 {{ m.total_exemplares }} unidade(s)</span>
+          {% else %}
+          <span class="badge badge-stock-zero">0 unidades</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if m.site_oficial %}
+          <a href="{{ m.site_oficial }}" target="_blank" rel="noopener" style="color: var(--accent-blue); font-size: 0.85rem; text-decoration: underline;">
+            Acessar link &nearr;
+          </a>
+          {% else %}
+          <span style="color: var(--text-dim);">-</span>
+          {% endif %}
+        </td>
+        <td style="text-align: right;">
+          <div style="display: inline-flex; gap: 0.4rem;">
+            <button 
+              class="btn btn-secondary btn-sm" 
+              hx-get="/marcas/modal/editar/{{ m.id }}" 
+              hx-target="#modal-container"
+              title="Editar Marca">
+              ✏️ Editar
+            </button>
+            <button 
+              class="btn btn-danger btn-sm" 
+              hx-delete="/marcas/{{ m.id }}" 
+              hx-target="#marcas-list-container"
+              hx-confirm="Tem certeza que deseja excluir a marca '{{ m.nome }}'? Todos os modelos e carrinhos associados também serão removidos."
+              title="Excluir Marca">
+              🗑️
+            </button>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="icon">🏭</div>
+  <h3>Nenhuma marca encontrada</h3>
+  <p>Cadastre marcas famosas de miniaturas como Hot Wheels, Matchbox, Tomica, Mini GT ou Majorette.</p>
+  <button class="btn btn-primary" hx-get="/marcas/modal/novo" hx-target="#modal-container">
+    + Cadastrar Primeira Marca
+  </button>
+</div>
+{% endif %}

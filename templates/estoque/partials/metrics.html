@@ -1,0 +1,67 @@
+<div class="metrics-grid">
+  <!-- Card 1: Total Carrinhos Físicos -->
+  <div class="metric-card">
+    <div class="metric-icon-box" style="background: rgba(255, 87, 34, 0.15); color: #ff5722;">
+      🏎️
+    </div>
+    <div class="metric-info">
+      <span class="metric-label">Total em Estoque</span>
+      <span class="metric-value">{{ metrics.total_carrinhos }}</span>
+      <span class="metric-sub">unidades físicas</span>
+    </div>
+  </div>
+
+  <!-- Card 2: Modelos Distintos -->
+  <div class="metric-card">
+    <div class="metric-icon-box" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">
+      🏷️
+    </div>
+    <div class="metric-info">
+      <span class="metric-label">Modelos Únicos</span>
+      <span class="metric-value">{{ metrics.total_modelos }}</span>
+      <span class="metric-sub">cadastrados</span>
+    </div>
+  </div>
+
+  <!-- Card 3: Marcas -->
+  <div class="metric-card">
+    <div class="metric-icon-box" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">
+      🏭
+    </div>
+    <div class="metric-info">
+      <span class="metric-label">Marcas Ativas</span>
+      <span class="metric-value">{{ metrics.total_marcas }}</span>
+      <span class="metric-sub">fabricantes</span>
+    </div>
+  </div>
+
+  <!-- Card 4: Valor Total do Acervo -->
+  <div class="metric-card">
+    <div class="metric-icon-box" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+      💰
+    </div>
+    <div class="metric-info">
+      <span class="metric-label">Patrimônio / Valor</span>
+      <span class="metric-value" style="font-size: 1.4rem;">
+        R$ {{ "%.2f"|format(metrics.valor_total_estoque) }}
+      </span>
+      <span class="metric-sub">valor de mercado estimado</span>
+    </div>
+  </div>
+
+  <!-- Card 5: Alerta Crítico de Estoque -->
+  <div class="metric-card">
+    <div class="metric-icon-box" style="background: {% if metrics.total_esgotados > 0 %}rgba(239, 68, 68, 0.15){% else %}rgba(245, 158, 11, 0.15){% endif %}; color: {% if metrics.total_esgotados > 0 %}#ef4444{% else %}#f59e0b{% endif %};">
+      ⚠️
+    </div>
+    <div class="metric-info">
+      <span class="metric-label">Estoque Crítico</span>
+      <div style="display: flex; gap: 0.5rem; align-items: baseline;">
+        <span class="metric-value" style="color: {% if metrics.total_esgotados > 0 %}#f87171{% else %}#fbbf24{% endif %};">
+          {{ metrics.total_esgotados + metrics.total_estoque_baixo }}
+        </span>
+      </div>
+      <span class="metric-sub">{{ metrics.total_esgotados }} zerado(s) &bull; {{ metrics.total_estoque_baixo }} unitário(s)</span>
+    </div>
+  </div>
+</div>

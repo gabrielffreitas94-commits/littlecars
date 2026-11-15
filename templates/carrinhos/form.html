@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titulo }} | LittleCars{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title-group">
+    <h1>🏎️ {{ titulo }}</h1>
+    <p>Preencha os detalhes completos da miniatura para o catálogo e inventário.</p>
+  </div>
+  <div class="page-actions">
+    <a href="/carrinhos" class="btn btn-secondary">
+      &larr; Voltar para a Coleção
+    </a>
+  </div>
+</div>
+
+<div style="max-width: 860px; margin: 0 auto;">
+  <div class="table-container" style="padding: 2rem;">
+    <form 
+      action="{% if carrinho %}/carrinhos/{{ carrinho.id }}/editar{% else %}/carrinhos{% endif %}" 
+      method="POST"
+      style="display: flex; flex-direction: column; gap: 1.5rem;"
+    >
+
+      <!-- Seção 1: Identificação de Marca e Modelo -->
+      <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1.25rem;">
+        <h3 style="color: #fff; font-size: 1.15rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>🏷️</span> 1. Marca e Modelo do Veículo
+        </h3>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label" for="marca_select">Marca Fabricante *</label>
+            <select 
+              id="marca_select" 
+              name="marca_id" 
+              class="form-control" 
+              required
+              hx-get="/modelos/options" 
+              hx-target="#modelo_id"
+              hx-trigger="change"
+            >
+              <option value="">-- Selecione a Marca --</option>
+              {% for m in marcas %}
+              <option value="{{ m.id }}" {% if marca_selecionada_id == m.id %}selected{% endif %}>
+                {{ m.nome }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="modelo_id">Modelo do Carro *</label>
+            <select id="modelo_id" name="modelo_id" class="form-control" required>
+              <option value="">-- Selecione o Modelo --</option>
+              {% for mod in modelos %}
+              <option value="{{ mod.id }}" {% if carrinho and carrinho.modelo_id == mod.id %}selected{% endif %}>
+                {{ mod.nome }}{% if mod.tipo_carroceria %} ({{ mod.tipo_carroceria }}){% endif %}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seção 2: Especificações da Miniatura -->
+      <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1.25rem;">
+        <h3 style="color: #fff; font-size: 1.15rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>🎨</span> 2. Características Físicas
+        </h3>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label class="form-label" for="cor">Cor & Decoração/Pintura *</label>
+            <input 
+              type="text" 
+              id="cor" 
+              name="cor" 
+              class="form-control" 
+              required 
+              placeholder="Ex: Azul Metálico com Listras Brancas"
+              value="{{ carrinho.cor if carrinho else '' }}"
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="escala">Escala Die-Cast *</label>
+            <select id="escala" name="escala" class="form-control" required>
+              {% set escalas = ['1:64', '1:60', '1:43', '1:32', '1:24', '1:18', '1:87', 'Outra'] %}
+              {% for esc in escalas %}
+              <option value="{{ esc }}" {% if carrinho and carrinho.escala == esc %}selected{% elif not carrinho and esc == '1:64' %}selected{% endif %}>
+                {{ esc }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="ano_fabricacao">Ano do Lançamento/Die-Cast</label>
+            <input 
+              type="number" 
+              id="ano_fabricacao" 
+              name="ano_fabricacao" 
+              class="form-control" 
+              placeholder="Ex: 2023"
+              min="1950" 
+              max="2035"
+              value="{{ carrinho.ano_fabricacao if carrinho and carrinho.ano_fabricacao else '' }}"
+            >
+          </div>
+        </div>
+
+        <div class="form-row-2" style="margin-top: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="serie_colecao">Série / Sub-linha / Coleção</label>
+            <input 
+              type="text" 
+              id="serie_colecao" 
+              name="serie_colecao" 
+              class="form-control" 
+              placeholder="Ex: HW Flames, Retro Entertainment, Moving Parts, Boulevard"
+              value="{{ carrinho.serie_colecao if carrinho and carrinho.serie_colecao else '' }}"
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="condicao">Estado de Conservação / Condição *</label>
+            <select id="condicao" name="condicao" class="form-control" required>
+              {% set condicoes = [
+                'Blister/Cartela Fechada', 
+                'Caixa Original Fechada', 
+                'Caixa Colecionador Lacrada', 
+                'Loose - Impecável', 
+                'Loose - Pequenos Detalhes', 
+                'Loose - Desgastado', 
+                'Customizado'
+              ] %}
+              {% for cond in condicoes %}
+              <option value="{{ cond }}" {% if carrinho and carrinho.condicao == cond %}selected{% endif %}>
+                {{ cond }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seção 3: Estoque, Localização e Valores -->
+      <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1.25rem;">
+        <h3 style="color: #fff; font-size: 1.15rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>📦</span> 3. Estoque e Localização
+        </h3>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label class="form-label" for="quantidade">Quantidade em Estoque *</label>
+            <input 
+              type="number" 
+              id="quantidade" 
+              name="quantidade" 
+              class="form-control" 
+              min="0" 
+              max="9999" 
+              required
+              value="{{ carrinho.quantidade if carrinho else 1 }}"
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="localizacao">Local de Armazenamento / Estante</label>
+            <input 
+              type="text" 
+              id="localizacao" 
+              name="localizacao" 
+              class="form-control" 
+              placeholder="Ex: Estante A - Prateleira 2, Gaveta 1"
+              value="{{ carrinho.localizacao if carrinho and carrinho.localizacao else '' }}"
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="codigo_barra_sku">SKU / Código do Chassi / Barra</label>
+            <input 
+              type="text" 
+              id="codigo_barra_sku" 
+              name="codigo_barra_sku" 
+              class="form-control" 
+              placeholder="Ex: HW-2023-088"
+              value="{{ carrinho.codigo_barra_sku if carrinho and carrinho.codigo_barra_sku else '' }}"
+            >
+          </div>
+        </div>
+
+        <div class="form-row-2" style="margin-top: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="preco_compra">Preço Pago / Custo de Aquisição (R$)</label>
+            <input 
+              type="text" 
+              id="preco_compra" 
+              name="preco_compra" 
+              class="form-control" 
+              placeholder="0.00"
+              value="{{ carrinho.preco_compra if carrinho else '0.00' }}"
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="valor_estimado">Valor de Mercado Estimado (R$)</label>
+            <input 
+              type="text" 
+              id="valor_estimado" 
+              name="valor_estimado" 
+              class="form-control" 
+              placeholder="0.00"
+              value="{{ carrinho.valor_estimado if carrinho else '0.00' }}"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Seção 4: Observações -->
+      <div>
+        <div class="form-group">
+          <label class="form-label" for="observacoes">Observações / Detalhes de Colecionador</label>
+          <textarea 
+            id="observacoes" 
+            name="observacoes" 
+            class="form-control" 
+            rows="3" 
+            placeholder="Ex: Edição especial, pneus de borracha Real Riders, pintura spectraflame, cartão comemorativo..."
+          >{{ carrinho.observacoes if carrinho and carrinho.observacoes else '' }}</textarea>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem;">
+        <a href="/carrinhos" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">
+          💾 Salvar Carrinho
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+{% endblock %}

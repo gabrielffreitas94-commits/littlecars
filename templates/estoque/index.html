@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Controle de Estoque de Carrinhos | LittleCars{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title-group">
+    <h1>📦 Gestão de Estoque</h1>
+    <p>Acompanhamento de inventário, reposição, contagem física e alerta de miniaturas esgotadas.</p>
+  </div>
+  <div class="page-actions">
+    <a href="/estoque/exportar" class="btn btn-secondary" title="Exportar planilha para conferência">
+      📥 Exportar CSV
+    </a>
+    <a href="/carrinhos/novo" class="btn btn-primary">
+      + Entrada de Carrinho
+    </a>
+  </div>
+</div>
+
+<!-- Grid de Indicadores / KPIs (Atualizado automaticamente via HTMX ao alterar estoque) -->
+<div id="metrics-container" hx-get="/estoque/metrics" hx-trigger="stockChanged from:body">
+  {% include "estoque/partials/metrics.html" %}
+</div>
+
+<!-- Painel de Filtros e Busca de Estoque -->
+<div class="filter-panel">
+  <div class="filter-form">
+    <div class="form-group">
+      <label class="form-label">Buscar Miniatura</label>
+      <input 
+        type="text" 
+        name="busca" 
+        class="form-control" 
+        placeholder="🔍 Modelo, cor, série, código..." 
+        value="{{ busca }}"
+        hx-get="/estoque" 
+        hx-include="[name='marca_id'], [name='status_estoque'], [name='condicao'], [name='localizacao'], [name='ordenar_por']"
+        hx-trigger="keyup changed delay:250ms, search" 
+        hx-target="#stock-table-container"
+      >
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Marca Fabricante</label>
+      <select 
+        name="marca_id" 
+        class="form-control"
+        hx-get="/estoque" 
+        hx-include="[name='busca'], [name='status_estoque'], [name='condicao'], [name='localizacao'], [name='ordenar_por']"
+        hx-trigger="change" 
+        hx-target="#stock-table-container"
+      >
+        <option value="">Todas as Marcas</option>
+        {% for m in marcas %}
+        <option value="{{ m.id }}" {% if marca_id_selecionada == m.id %}selected{% endif %}>
+          {{ m.nome }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Status do Estoque</label>
+      <select 
+        name="status_estoque" 
+        class="form-control"
+        hx-get="/estoque" 
+        hx-include="[name='busca'], [name='marca_id'], [name='condicao'], [name='localizacao'], [name='ordenar_por']"
+        hx-trigger="change" 
+        hx-target="#stock-table-container"
+      >
+        <option value="">Todos os Níveis</option>
+        <option value="disponivel" {% if status_estoque_selecionado == 'disponivel' %}selected{% endif %}>Em Estoque (> 0)</option>
+        <option value="baixo" {% if status_estoque_selecionado == 'baixo' %}selected{% endif %}>⚠️ Última Unidade (1)</option>
+        <option value="esgotado" {% if status_estoque_selecionado == 'esgotado' %}selected{% endif %}>❌ Esgotados (0)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Localização</label>
+      <select 
+        name="localizacao" 
+        class="form-control"
+        hx-get="/estoque" 
+        hx-include="[name='busca'], [name='marca_id'], [name='status_estoque'], [name='condicao'], [name='ordenar_por']"
+        hx-trigger="change" 
+        hx-target="#stock-table-container"
+      >
+        <option value="">Todas as Localizações</option>
+        {% for loc in localizacoes %}
+        <option value="{{ loc }}" {% if localizacao_selecionada == loc %}selected{% endif %}>{{ loc }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Ordenar Por</label>
+      <select 
+        name="ordenar_por" 
+        class="form-control"
+        hx-get="/estoque" 
+        hx-include="[name='busca'], [name='marca_id'], [name='status_estoque'], [name='condicao'], [name='localizacao']"
+        hx-trigger="change" 
+        hx-target="#stock-table-container"
+      >
+        <option value="qtd_asc" {% if ordenar_por == 'qtd_asc' %}selected{% endif %}>Menor Estoque Primeiro</option>
+        <option value="qtd_desc" {% if ordenar_por == 'qtd_desc' %}selected{% endif %}>Maior Estoque Primeiro</option>
+        <option value="valor_desc" {% if ordenar_por == 'valor_desc' %}selected{% endif %}>Maior Valor Primeiro</option>
+        <option value="valor_asc" {% if ordenar_por == 'valor_asc' %}selected{% endif %}>Menor Valor Primeiro</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- Tabela de Controle de Estoque com Stepper HTMX -->
+<div id="stock-table-container">
+  {% include "estoque/partials/table.html" %}
+</div>
+
+{% endblock %}
