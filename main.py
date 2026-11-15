@@ -1,37 +1,24 @@
-from contextlib import asynccontextmanager
-from fastapi import FastAPI
-from fastapi.responses import RedirectResponse
-from fastapi.staticfiles import StaticFiles
-import database
-from routers import marcas, modelos, carrinhos, estoque
+import os
+import sys
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Inicializa banco de dados SQLite e dados seed caso não existam
-    database.init_db()
-    yield
+def run():
+    """Inicia as migrações e o servidor de desenvolvimento do Django."""
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "littlecars_config.settings")
+    try:
+        from django.core.management import execute_from_command_line
+    except ImportError as exc:
+        raise ImportError(
+            "Couldn't import Django. Are you sure it's installed and "
+            "available on your PYTHONPATH environment variable?"
+        ) from exc
 
-app = FastAPI(
-    title="LittleCars - Gestão de Coleção de Carrinhos",
-    description="Sistema web em FastAPI com front-end HTMX e CSS próprio para organização de carrinhos die-cast",
-    version="1.0.0",
-    lifespan=lifespan
-)
+    # Garante que as migrações e dados seed estejam aplicados
+    print("🏎️ Verificando e aplicando migrações do Django...")
+    execute_from_command_line(["manage.py", "migrate", "--noinput"])
 
-# Monta arquivos estáticos (CSS próprio e HTMX local)
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-# Registra os módulos de CRUD e Estoque
-app.include_router(estoque.router)
-app.include_router(carrinhos.router)
-app.include_router(modelos.router)
-app.include_router(marcas.router)
-
-@app.get("/")
-def raiz():
-    # Redireciona a rota inicial diretamente para a página de estoque
-    return RedirectResponse(url="/estoque", status_code=307)
+    # Inicia o servidor HTTP
+    print("🚀 Iniciando LittleCars em http://127.0.0.1:8000 ...")
+    execute_from_command_line(["manage.py", "runserver", "127.0.0.1:8000"])
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    run()

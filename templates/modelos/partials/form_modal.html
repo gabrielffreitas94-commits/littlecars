@@ -37,7 +37,7 @@
             class="form-control" 
             required 
             placeholder="Ex: Nissan Skyline GT-R (R34), '67 Camaro, Porsche 911"
-            value="{{ modelo.nome if modelo else '' }}"
+            value="{{ modelo.nome|default:'' }}"
             autofocus
           >
         </div>
@@ -52,7 +52,7 @@
               class="form-control" 
               list="carroceria-sugestoes"
               placeholder="Ex: Muscle Car, Supercarro, SUV"
-              value="{{ modelo.tipo_carroceria if modelo and modelo.tipo_carroceria else '' }}"
+              value="{{ modelo.tipo_carroceria|default:'' }}"
             >
             <datalist id="carroceria-sugestoes">
               <option value="Muscle Car">
@@ -78,7 +78,7 @@
               placeholder="Ex: 1999"
               min="1900" 
               max="2035"
-              value="{{ modelo.ano_lancamento if modelo and modelo.ano_lancamento else '' }}"
+              value="{{ modelo.ano_lancamento|default:'' }}"
             >
           </div>
         </div>
@@ -91,7 +91,7 @@
             class="form-control" 
             rows="3" 
             placeholder="Ex: Designer famoso, história em filmes, geração do motor..."
-          >{{ modelo.descricao if modelo and modelo.descricao else '' }}</textarea>
+          >{{ modelo.descricao|default:'' }}</textarea>
         </div>
       </div>
 

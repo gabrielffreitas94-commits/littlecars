@@ -25,7 +25,7 @@
             class="form-control" 
             required 
             placeholder="Ex: Hot Wheels, Matchbox, Tomica"
-            value="{{ marca.nome if marca else '' }}"
+            value="{{ marca.nome|default:'' }}"
             autofocus
           >
         </div>
@@ -39,7 +39,7 @@
               name="pais_origem" 
               class="form-control" 
               placeholder="Ex: EUA, Japão, Reino Unido, França"
-              value="{{ marca.pais_origem if marca else '' }}"
+              value="{{ marca.pais_origem|default:'' }}"
             >
           </div>
 
@@ -53,7 +53,7 @@
               placeholder="Ex: 1968"
               min="1800" 
               max="2030"
-              value="{{ marca.ano_fundacao if marca and marca.ano_fundacao else '' }}"
+              value="{{ marca.ano_fundacao|default:'' }}"
             >
           </div>
         </div>
@@ -66,7 +66,7 @@
             name="site_oficial" 
             class="form-control" 
             placeholder="https://..."
-            value="{{ marca.site_oficial if marca and marca.site_oficial else '' }}"
+            value="{{ marca.site_oficial|default:'' }}"
           >
         </div>
 
@@ -78,7 +78,7 @@
             class="form-control" 
             rows="3" 
             placeholder="Breve descrição, linhas de produtos conhecidas, etc."
-          >{{ marca.descricao if marca and marca.descricao else '' }}</textarea>
+          >{{ marca.descricao|default:'' }}</textarea>
         </div>
       </div>
 

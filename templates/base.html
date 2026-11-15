@@ -25,7 +25,7 @@
             <a href="/estoque" class="nav-link {% if active_page == 'estoque' %}active{% endif %}">
               <span>📦 Estoque</span>
               <span id="nav-stock-pill" class="counter-pill" hx-get="/estoque/metrics/pill" hx-trigger="stockChanged from:body">
-                {{ total_itens_estoque if total_itens_estoque is defined else '' }}
+                {{ total_itens_estoque|default:'' }}
               </span>
             </a>
           </li>
@@ -62,11 +62,16 @@
 
   <!-- Rodapé -->
   <footer class="footer">
-    <p>🏎️ <strong>LittleCars</strong> &copy; 2026 &mdash; Sistema de Gestão de Carrinhos Die-Cast &middot; FastAPI + HTMX + CSS Próprio</p>
+    <p>🏎️ <strong>LittleCars</strong> &copy; 2026 &mdash; Sistema de Gestão de Carrinhos Die-Cast &middot; Django + HTMX + CSS Próprio</p>
   </footer>
 
-  <!-- Script simples para manipular Toasts vindos do HTMX -->
+  <!-- Script simples para manipular Toasts vindos do HTMX e configurar CSRF -->
   <script>
+    // Envia o CSRF token do Django em todas as requisições AJAX do HTMX
+    document.body.addEventListener('htmx:configRequest', function(evt) {
+      evt.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+    });
+
     document.body.addEventListener('showToast', function(evt) {
       const msg = evt.detail.value || evt.detail.message || "Ação executada com sucesso!";
       const type = evt.detail.type || "success";

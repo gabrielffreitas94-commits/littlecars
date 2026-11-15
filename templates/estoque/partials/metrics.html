@@ -43,7 +43,7 @@
     <div class="metric-info">
       <span class="metric-label">Patrimônio / Valor</span>
       <span class="metric-value" style="font-size: 1.4rem;">
-        R$ {{ "%.2f"|format(metrics.valor_total_estoque) }}
+        R$ {{ metrics.valor_total_estoque|floatformat:2 }}
       </span>
       <span class="metric-sub">valor de mercado estimado</span>
     </div>
@@ -58,7 +58,7 @@
       <span class="metric-label">Estoque Crítico</span>
       <div style="display: flex; gap: 0.5rem; align-items: baseline;">
         <span class="metric-value" style="color: {% if metrics.total_esgotados > 0 %}#f87171{% else %}#fbbf24{% endif %};">
-          {{ metrics.total_esgotados + metrics.total_estoque_baixo }}
+          {{ metrics.total_critico|default:metrics.total_esgotados }}
         </span>
       </div>
       <span class="metric-sub">{{ metrics.total_esgotados }} zerado(s) &bull; {{ metrics.total_estoque_baixo }} unitário(s)</span>

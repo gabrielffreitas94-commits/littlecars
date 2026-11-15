@@ -4,10 +4,10 @@
     <thead>
       <tr>
         <th>Modelo</th>
-        <th>Marca</th>
-        <th>Tipo de Carroceria</th>
-        <th>Ano Lançamento</th>
-        <th>Variações / Exemplares</th>
+        <th>Marca Fabricante</th>
+        <th>Tipo / Carroceria</th>
+        <th>Ano Modelo Real</th>
+        <th>Miniaturas Cadastradas</th>
         <th>Estoque Físico</th>
         <th style="text-align: right;">Ações</th>
       </tr>
@@ -24,20 +24,20 @@
           {% endif %}
         </td>
         <td>
-          <span class="badge badge-brand">{{ m.marca_nome }}</span>
+          <span class="badge badge-brand">{{ m.marca.nome|default:m.marca_nome }}</span>
         </td>
         <td>
           {% if m.tipo_carroceria %}
-          <span class="badge badge-condicao">{{ m.tipo_carroceria }}</span>
+          <span class="badge badge-model">{{ m.tipo_carroceria }}</span>
           {% else %}
           <span style="color: var(--text-dim);">-</span>
           {% endif %}
         </td>
         <td>
-          {{ m.ano_lancamento if m.ano_lancamento else '-' }}
+          {{ m.ano_lancamento|default:'-' }}
         </td>
         <td>
-          <span class="badge badge-model">{{ m.total_carrinhos }} variação(ões)</span>
+          <span class="badge badge-condicao">{{ m.total_carrinhos|default:0 }} variação(ões)</span>
         </td>
         <td>
           {% if m.total_exemplares > 0 %}
@@ -59,7 +59,7 @@
               class="btn btn-danger btn-sm" 
               hx-delete="/modelos/{{ m.id }}" 
               hx-target="#modelos-list-container"
-              hx-confirm="Tem certeza que deseja excluir o modelo '{{ m.nome }}'? Todos os carrinhos cadastrados para este modelo serão excluídos."
+              hx-confirm="Tem certeza que deseja excluir o modelo '{{ m.nome }}'? Todos os carrinhos deste modelo também serão removidos da coleção."
               title="Excluir Modelo">
               🗑️
             </button>
@@ -73,8 +73,8 @@
 {% else %}
 <div class="empty-state">
   <div class="icon">🏷️</div>
-  <h3>Nenhum modelo cadastrado</h3>
-  <p>Cadastre os modelos de veículos como '67 Camaro, Nissan Skyline R34, Dodge Charger, etc.</p>
+  <h3>Nenhum modelo encontrado</h3>
+  <p>Cadastre os modelos de veículos que compõem as marcas colecionáveis.</p>
   <button class="btn btn-primary" hx-get="/modelos/modal/novo" hx-target="#modal-container">
     + Cadastrar Primeiro Modelo
   </button>

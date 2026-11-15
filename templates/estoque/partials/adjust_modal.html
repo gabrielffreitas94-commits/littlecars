@@ -15,7 +15,7 @@
         <div style="background-color: var(--bg-input); padding: 0.85rem; border-radius: var(--radius-md); font-size: 0.88rem; color: var(--text-muted); border-left: 3px solid var(--accent-orange);">
           <strong>Item:</strong> {{ carrinho.marca_nome }} &mdash; {{ carrinho.modelo_nome }} ({{ carrinho.cor }})
           <br>
-          <strong>Escala:</strong> {{ carrinho.escala }} | <strong>Condição:</strong> {{ carrinho.condicao }}
+          <strong>Escala:</strong> {{ carrinho.escala|default:'1:64' }} | <strong>Condição:</strong> {{ carrinho.condicao }}
         </div>
 
         <div class="form-row-2">
@@ -42,7 +42,7 @@
               name="localizacao" 
               class="form-control" 
               placeholder="Ex: Estante B - Prateleira 2"
-              value="{{ carrinho.localizacao if carrinho.localizacao else '' }}"
+              value="{{ carrinho.localizacao|default:'' }}"
             >
           </div>
         </div>

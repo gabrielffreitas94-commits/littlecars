@@ -6,6 +6,7 @@ __pycache__/
 .Python
 env/
 venv/
+.venv/
 ENV/
 build/
 develop-eggs/
@@ -22,6 +23,44 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+*.manifest
+*.spec
+
+# Testes e Cobertura
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+coverage/
+
+# Tipagem e Linters
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Node / Frontend / Outros runtimes
+node_modules/
+.next/
+out/
+target/
 
 # SQLite DB
 *.db
@@ -30,13 +69,21 @@ wheels/
 *.db-wal
 *.db-shm
 
-# Ambiente e IDEs
+# Ambiente e Variáveis Sensíveis
 .env
+.env.*
 .env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDEs e Editores
 .vscode/
 .idea/
 *.swp
 *.swo
+*.sublime-workspace
+*.sublime-project
 
 # OS
 .DS_Store

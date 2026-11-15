@@ -7,13 +7,13 @@
   <div class="page-title-group">
     <div style="display: flex; gap: 0.5rem; margin-bottom: 0.4rem;">
       <span class="badge badge-brand">{{ carrinho.marca_nome }}</span>
-      <span class="badge badge-condicao">Escala {{ carrinho.escala }}</span>
+      <span class="badge badge-condicao">Escala {{ carrinho.escala|default:'1:64' }}</span>
       {% if carrinho.ano_fabricacao %}
       <span class="badge badge-condicao">Ano {{ carrinho.ano_fabricacao }}</span>
       {% endif %}
     </div>
     <h1>{{ carrinho.modelo_nome }}</h1>
-    <p>{{ carrinho.cor }} &bull; {{ carrinho.serie_colecao if carrinho.serie_colecao else 'Linha Regular' }}</p>
+    <p>{{ carrinho.cor }} &bull; {{ carrinho.serie_colecao|default:'Linha Regular' }}</p>
   </div>
   <div class="page-actions">
     <a href="/carrinhos" class="btn btn-secondary">
@@ -66,7 +66,7 @@
         <div>
           <div class="metric-label">Série / Linha</div>
           <div style="font-size: 1rem; font-weight: 600; color: #e2e8f0;">
-            {{ carrinho.serie_colecao if carrinho.serie_colecao else 'Nenhuma série específica' }}
+            {{ carrinho.serie_colecao|default:'Nenhuma série específica' }}
           </div>
         </div>
 
@@ -80,7 +80,7 @@
         <div>
           <div class="metric-label">Código SKU / Chassi</div>
           <div style="font-size: 0.95rem; font-family: monospace; color: #94a3b8;">
-            {{ carrinho.codigo_barra_sku if carrinho.codigo_barra_sku else 'Não informado' }}
+            {{ carrinho.codigo_barra_sku|default:'Não informado' }}
           </div>
         </div>
       </div>
@@ -117,7 +117,7 @@
       <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); text-align: left;">
         <div class="metric-label">Local de Guarda</div>
         <div style="font-size: 1rem; font-weight: 700; color: #fff; margin-top: 0.25rem;">
-          📍 {{ carrinho.localizacao if carrinho.localizacao else 'Não especificado' }}
+          📍 {{ carrinho.localizacao|default:'Não especificado' }}
         </div>
       </div>
     </div>
@@ -130,20 +130,19 @@
 
       <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
         <span style="color: var(--text-muted); font-size: 0.9rem;">Preço de Aquisição:</span>
-        <strong style="color: #fff;">R$ {{ "%.2f"|format(carrinho.preco_compra) }}</strong>
+        <strong style="color: #fff;">R$ {{ carrinho.preco_compra|floatformat:2 }}</strong>
       </div>
 
       <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
         <span style="color: var(--text-muted); font-size: 0.9rem;">Valor de Mercado Est.:</span>
-        <strong style="color: #34d399; font-size: 1.1rem;">R$ {{ "%.2f"|format(carrinho.valor_estimado) }}</strong>
+        <strong style="color: #34d399; font-size: 1.1rem;">R$ {{ carrinho.valor_estimado|floatformat:2 }}</strong>
       </div>
 
       {% if carrinho.preco_compra > 0 %}
-      {% set lucro = carrinho.valor_estimado - carrinho.preco_compra %}
       <div style="background-color: var(--bg-input); padding: 0.75rem; border-radius: var(--radius-md); font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
         <span style="color: var(--text-muted);">Variação / Valorização:</span>
         <span style="font-weight: 700; color: {% if lucro >= 0 %}#34d399{% else %}#f87171{% endif %};">
-          {% if lucro >= 0 %}+{% endif %}R$ {{ "%.2f"|format(lucro) }}
+          {% if lucro >= 0 %}+{% endif %}R$ {{ lucro|floatformat:2 }}
         </span>
       </div>
       {% endif %}

@@ -17,7 +17,7 @@
     {% endif %}
   </td>
   <td>
-    <span class="badge badge-condicao">{{ c.escala }}</span>
+    <span class="badge badge-condicao">{{ c.escala|default:'1:64' }}</span>
     {% if c.ano_fabricacao %}
     <span style="font-size: 0.8rem; color: var(--text-muted);">&bull; {{ c.ano_fabricacao }}</span>
     {% endif %}
@@ -69,7 +69,7 @@
     {% endif %}
   </td>
   <td style="font-weight: 700; color: #34d399;">
-    R$ {{ "%.2f"|format(c.valor_total_item if c.valor_total_item is defined else (c.quantidade * c.valor_estimado)) }}
+    R$ {{ c.valor_total_item|floatformat:2 }}
   </td>
   <td style="text-align: right;">
     <div style="display: inline-flex; gap: 0.35rem;">

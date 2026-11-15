@@ -31,10 +31,10 @@
           {% endif %}
         </td>
         <td>
-          {{ m.ano_fundacao if m.ano_fundacao else '-' }}
+          {{ m.ano_fundacao|default:'-' }}
         </td>
         <td>
-          <span class="badge badge-model">{{ m.total_modelos }} modelo(s)</span>
+          <span class="badge badge-model">{{ m.total_modelos|default:0 }} modelo(s)</span>
         </td>
         <td>
           {% if m.total_exemplares > 0 %}

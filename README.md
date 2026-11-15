@@ -1,6 +1,6 @@
 # 🏎️ LittleCars &mdash; Gestão de Coleção de Carrinhos de Brinquedo
 
-Um aplicativo web moderno feito em **FastAPI**, com front-end renderizado diretamente pelo Python utilizando **HTMX** para interatividade fluida e dinâmica sem recarregamento de página, e estilizado com **CSS 100% próprio** (sem Tailwind, Bootstrap ou qualquer biblioteca externa de estilos).
+Um aplicativo web moderno feito em **Django**, com front-end renderizado por templates Django utilizando **HTMX** para interatividade fluida e dinâmica sem recarregamento de página, e estilizado com **CSS 100% próprio** (sem Tailwind, Bootstrap ou qualquer biblioteca externa de estilos).
 
 ---
 
@@ -9,7 +9,7 @@ Um aplicativo web moderno feito em **FastAPI**, com front-end renderizado direta
 1. **📦 Página de Estoque**:
    - Painel com 5 cartões de indicadores (KPIs): Total de carrinhos físicos, modelos distintos, marcas ativas, valor total estimado do acervo e alerta de estoque crítico (zerados e última unidade).
    - Filtros dinâmicos em tempo real com HTMX (busca por texto, marca, status de estoque, condição, localização e ordenação por quantidade ou valor).
-   - Botões instantâneos de passo (`+` e `−`) para aumentar ou diminuir unidades diretamente na tabela.
+   - Botões instantâneos de passo (`+` e `−`) para aumentar ou diminuir unidades diretamente na tabela com HTMX.
    - Modal de ajuste rápido de quantidade, localização e motivo da alteração.
    - Exportação do inventário completo para planilha em formato **CSV**.
 
@@ -21,7 +21,7 @@ Um aplicativo web moderno feito em **FastAPI**, com front-end renderizado direta
 3. **🏷️ CRUD de Modelos**:
    - Cadastro, edição, listagem e exclusão de modelos de veículos associados às marcas.
    - Informações: Nome do modelo (ex.: *'67 Camaro*, *Nissan Skyline GT-R R34*, *Porsche 911 GT3 RS*), marca vinculada, tipo de carroceria (Muscle Car, Esportivo, SUV, etc.), ano de lançamento real e curiosidades.
-   - Dropdown dinâmico que carrega automaticamente os modelos da marca selecionada.
+   - Dropdown dinâmico que carrega automaticamente os modelos da marca selecionada via HTMX.
 
 4. **🚗 CRUD de Carrinhos (Itens Físicos da Coleção)**:
    - Gerenciamento detalhado de cada exemplar do colecionador.
@@ -33,21 +33,23 @@ Um aplicativo web moderno feito em **FastAPI**, com front-end renderizado direta
    - Paleta escura inspirada em garagens esportivas e vitrines de colecionador.
    - Modais interativos, badges de status estilizados e toasts flutuantes para feedback instantâneo de ações.
    - Responsivo para computadores, tablets e smartphones.
+   - Totalmente autossuficiente e funcional offline (sem chamadas a APIs ou CDNs externas).
 
 ---
 
 ## 🚀 Como Executar
 
-O ambiente já possui as dependências instaladas. Para iniciar o servidor de desenvolvimento, execute no terminal:
+O ambiente utiliza Python 3.10+ e Django. Para iniciar o servidor de desenvolvimento, execute no terminal:
 
 ```bash
 python main.py
 ```
 
-Ou usando o Uvicorn diretamente:
+Ou usando o utilitário padrão do Django:
 
 ```bash
-python -m uvicorn main:app --reload --port 8000
+python manage.py migrate
+python manage.py runserver 127.0.0.1:8000
 ```
 
 Abra o navegador no endereço: **http://127.0.0.1:8000**

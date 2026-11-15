@@ -22,6 +22,7 @@
       method="POST"
       style="display: flex; flex-direction: column; gap: 1.5rem;"
     >
+      {% csrf_token %}
 
       <!-- Seção 1: Identificação de Marca e Modelo -->
       <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1.25rem;">
@@ -80,19 +81,21 @@
               class="form-control" 
               required 
               placeholder="Ex: Azul Metálico com Listras Brancas"
-              value="{{ carrinho.cor if carrinho else '' }}"
+              value="{{ carrinho.cor|default:'' }}"
             >
           </div>
 
           <div class="form-group">
             <label class="form-label" for="escala">Escala Die-Cast *</label>
             <select id="escala" name="escala" class="form-control" required>
-              {% set escalas = ['1:64', '1:60', '1:43', '1:32', '1:24', '1:18', '1:87', 'Outra'] %}
-              {% for esc in escalas %}
-              <option value="{{ esc }}" {% if carrinho and carrinho.escala == esc %}selected{% elif not carrinho and esc == '1:64' %}selected{% endif %}>
-                {{ esc }}
-              </option>
-              {% endfor %}
+              <option value="1:64" {% if carrinho and carrinho.escala == '1:64' %}selected{% elif not carrinho %}selected{% endif %}>1:64</option>
+              <option value="1:60" {% if carrinho and carrinho.escala == '1:60' %}selected{% endif %}>1:60</option>
+              <option value="1:43" {% if carrinho and carrinho.escala == '1:43' %}selected{% endif %}>1:43</option>
+              <option value="1:32" {% if carrinho and carrinho.escala == '1:32' %}selected{% endif %}>1:32</option>
+              <option value="1:24" {% if carrinho and carrinho.escala == '1:24' %}selected{% endif %}>1:24</option>
+              <option value="1:18" {% if carrinho and carrinho.escala == '1:18' %}selected{% endif %}>1:18</option>
+              <option value="1:87" {% if carrinho and carrinho.escala == '1:87' %}selected{% endif %}>1:87</option>
+              <option value="Outra" {% if carrinho and carrinho.escala == 'Outra' %}selected{% endif %}>Outra</option>
             </select>
           </div>
 
@@ -106,7 +109,7 @@
               placeholder="Ex: 2023"
               min="1950" 
               max="2035"
-              value="{{ carrinho.ano_fabricacao if carrinho and carrinho.ano_fabricacao else '' }}"
+              value="{{ carrinho.ano_fabricacao|default:'' }}"
             >
           </div>
         </div>
@@ -120,27 +123,20 @@
               name="serie_colecao" 
               class="form-control" 
               placeholder="Ex: HW Flames, Retro Entertainment, Moving Parts, Boulevard"
-              value="{{ carrinho.serie_colecao if carrinho and carrinho.serie_colecao else '' }}"
+              value="{{ carrinho.serie_colecao|default:'' }}"
             >
           </div>
 
           <div class="form-group">
             <label class="form-label" for="condicao">Estado de Conservação / Condição *</label>
             <select id="condicao" name="condicao" class="form-control" required>
-              {% set condicoes = [
-                'Blister/Cartela Fechada', 
-                'Caixa Original Fechada', 
-                'Caixa Colecionador Lacrada', 
-                'Loose - Impecável', 
-                'Loose - Pequenos Detalhes', 
-                'Loose - Desgastado', 
-                'Customizado'
-              ] %}
-              {% for cond in condicoes %}
-              <option value="{{ cond }}" {% if carrinho and carrinho.condicao == cond %}selected{% endif %}>
-                {{ cond }}
-              </option>
-              {% endfor %}
+              <option value="Blister/Cartela Fechada" {% if not carrinho or carrinho.condicao == 'Blister/Cartela Fechada' %}selected{% endif %}>Blister/Cartela Fechada</option>
+              <option value="Caixa Original Fechada" {% if carrinho and carrinho.condicao == 'Caixa Original Fechada' %}selected{% endif %}>Caixa Original Fechada</option>
+              <option value="Caixa Colecionador Lacrada" {% if carrinho and carrinho.condicao == 'Caixa Colecionador Lacrada' %}selected{% endif %}>Caixa Colecionador Lacrada</option>
+              <option value="Loose - Impecável" {% if carrinho and carrinho.condicao == 'Loose - Impecável' %}selected{% endif %}>Loose - Impecável</option>
+              <option value="Loose - Pequenos Detalhes" {% if carrinho and carrinho.condicao == 'Loose - Pequenos Detalhes' %}selected{% endif %}>Loose - Pequenos Detalhes</option>
+              <option value="Loose - Desgastado" {% if carrinho and carrinho.condicao == 'Loose - Desgastado' %}selected{% endif %}>Loose - Desgastado</option>
+              <option value="Customizado" {% if carrinho and carrinho.condicao == 'Customizado' %}selected{% endif %}>Customizado</option>
             </select>
           </div>
         </div>
@@ -163,7 +159,7 @@
               min="0" 
               max="9999" 
               required
-              value="{{ carrinho.quantidade if carrinho else 1 }}"
+              value="{{ carrinho.quantidade|default:'1' }}"
             >
           </div>
 
@@ -175,7 +171,7 @@
               name="localizacao" 
               class="form-control" 
               placeholder="Ex: Estante A - Prateleira 2, Gaveta 1"
-              value="{{ carrinho.localizacao if carrinho and carrinho.localizacao else '' }}"
+              value="{{ carrinho.localizacao|default:'' }}"
             >
           </div>
 
@@ -187,7 +183,7 @@
               name="codigo_barra_sku" 
               class="form-control" 
               placeholder="Ex: HW-2023-088"
-              value="{{ carrinho.codigo_barra_sku if carrinho and carrinho.codigo_barra_sku else '' }}"
+              value="{{ carrinho.codigo_barra_sku|default:'' }}"
             >
           </div>
         </div>
@@ -201,7 +197,7 @@
               name="preco_compra" 
               class="form-control" 
               placeholder="0.00"
-              value="{{ carrinho.preco_compra if carrinho else '0.00' }}"
+              value="{{ carrinho.preco_compra|default:'0.00' }}"
             >
           </div>
 
@@ -213,7 +209,7 @@
               name="valor_estimado" 
               class="form-control" 
               placeholder="0.00"
-              value="{{ carrinho.valor_estimado if carrinho else '0.00' }}"
+              value="{{ carrinho.valor_estimado|default:'0.00' }}"
             >
           </div>
         </div>
@@ -229,7 +225,7 @@
             class="form-control" 
             rows="3" 
             placeholder="Ex: Edição especial, pneus de borracha Real Riders, pintura spectraflame, cartão comemorativo..."
-          >{{ carrinho.observacoes if carrinho and carrinho.observacoes else '' }}</textarea>
+          >{{ carrinho.observacoes|default:'' }}</textarea>
         </div>
       </div>
 
